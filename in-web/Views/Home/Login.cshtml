@@ -1,0 +1,35 @@
+﻿@model LoginViewModel
+
+<div class="container" style="max-width: 500px">
+    <div class="text-center pt-3">Logowanie</div>
+    <form asp-controller="Home" asp-action="Login" method="post">
+        <div class="row pt-3">
+            <div class="col-4">
+                <label asp-for="Username" class="col-form-label"></label>
+            </div>
+            <div class="col-8">
+                <input asp-for="Username" class="form-control" />
+                <span asp-validation-for="Username" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row pt-3">
+            <div class="col-4">
+                <label asp-for="Password" class="col-form-label"></label>
+            </div>
+            <div class="col-8">
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row pt-3">
+            <div class="col text-center text-danger">@Html.ValidationMessage("Error")</div>
+        </div>
+
+        <div class="row pt-3">
+            <div class="col text-center">
+                <button type="submit" class="btn btn-primary">Zaloguj</button>
+            </div>
+        </div>
+    </form>
+</div>
