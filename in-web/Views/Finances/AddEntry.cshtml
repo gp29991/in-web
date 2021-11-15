@@ -1,0 +1,106 @@
+﻿@{
+    Layout = "_Layout2";
+}
+@model AddEntryViewModel
+
+@section stylesheets{
+    <link href="~/lib/jqueryui/themes/base/jquery-ui.css" rel="stylesheet">
+}
+
+<div class="container" style="max-width: 500px">
+    <div class="text-center pt-3">Nowy wpis</div>
+    <form asp-controller="Finances" asp-action="AddEntry" method="post">
+
+        <input hidden asp-for="Data.Username" value="@User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Name).Value">
+
+        <div class="row pt-3">
+            <div class="col-4">
+                <label asp-for="Data.Amount" class="col-form-label"></label>
+            </div>
+            <div class="col-8">
+                <input asp-for="Data.Amount" class="form-control" />
+                <span asp-validation-for="Data.Amount" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row pt-3">
+            <div class="col-4">
+                <label asp-for="DataType" class="col-form-label"></label>
+            </div>
+            <div class="col-8">
+                <div class="row ps-3">
+                    @foreach (var type in AddingHelper.DataTypeValues)
+                    {
+                        <div class="col-6 form-check">
+                            <input type="radio" class="form-check-input" asp-for="DataType" value="@type.Key" id="Type@(type.Key)">
+                            <label class="form-check-label" for="Type@(type.Key)">@type.Value</label>
+                        </div>
+                    }
+                </div>
+                <span asp-validation-for="DataType" class="text-danger"></span>
+            </div>
+            </div>
+
+            <div class="row pt-3">
+                <div class="col-4">
+                    <label asp-for="Data.Date" class="col-form-label"></label>
+                </div>
+                <div class="col-8">
+                    <input type="text" class="form-control text-center" id="datepicker" readonly="readonly" asp-for="Data.Date">
+                    <span asp-validation-for="Data.Date" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row pt-3">
+                <div class="col-4">
+                    <label asp-for="Data.Name" class="col-form-label"></label>
+                </div>
+                <div class="col-8">
+                    <input asp-for="Data.Name" class="form-control" />
+                    <span asp-validation-for="Data.Name" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row pt-3">
+                <div class="col-4">
+                    <label asp-for="Data.Description" class="col-form-label"></label>
+                </div>
+                <div class="col-8">
+                    <textarea asp-for="Data.Description" rows="3" class="form-control" style="resize: none;"></textarea>
+                    <span asp-validation-for="Data.Description" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row pt-3">
+                <div class="col-4">
+                    <label asp-for="Data.CategoryName" class="col-form-label"></label>
+                </div>
+                <div class="col-8">
+                    <select asp-for="Data.CategoryName" asp-items="@ViewBag.categories" class="form-select">
+                        <option value="" disabled hidden selected>--Wybierz kategorię--</option>
+                    </select>
+                    <span asp-validation-for="Data.CategoryName" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row pt-3">
+                <div class="col text-center">
+                    <button type="submit" class="btn btn-primary btn-sm" style="width: 200px">Dodaj</button>
+                </div>
+            </div>
+</form>
+
+    <div class="row pt-3">
+        <div class="col text-center">
+            <a class="btn btn-secondary btn-sm" asp-action="ReturnToView" asp-controller="Finances" style="width: 200px">Powrót do widoku</a>
+        </div>
+    </div>
+
+</div>
+
+@section scripts{
+    <script src="~/lib/jquery/jquery.min.js"></script>
+    <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
+    <script src="~/js/datepickerconf.js"></script>
+    <script src="~/js/addentry.js"></script>
+}

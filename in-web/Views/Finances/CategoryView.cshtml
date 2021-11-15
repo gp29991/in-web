@@ -1,0 +1,59 @@
+﻿@{
+    Layout = "_Layout3";
+}
+
+<div class="container" style="max-width: 1000px">
+
+    <!-- Information alerts -->
+    @if (Model.ShowAlert == "add")
+    {
+        <div class="alert alert-success alert-dismissible fade show mt-5" role="alert">
+            Wpis został dodany pomyślnie.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Data table -->
+    @if (Model.FinancialDataGrouped.Count == 0)
+    {
+        <div class="text-center fs-5 pt-5 pb-5">Brak danych spełniających zadane kryteria.</div>
+    }
+    else
+    {
+        if (Model.Options.Period == "all")
+        {
+            <div class="text-center fs-5 pt-5">Wszystkie @OptionsHelper.ViewScopeValues[Model.Options.ViewScope].ToLower() pogrupowane wg kategorii</div>
+        }
+        else
+        {
+            <div class="text-center fs-5 pt-5">@OptionsHelper.ViewScopeValues[Model.Options.ViewScope] za okres od @Model.Options.StartDate?.ToShortDateString() do @Model.Options.EndDate?.ToShortDateString() pogrupowane wg kategorii</div>
+        }
+            <div class="row justify-content-center">
+                <table class="table table-sm mt-1" style="vertical-align: middle; max-width: 500px">
+                    <thead>
+                        <tr>
+                            <th scope="col"><a class="text-reset text-decoration-none" asp-action="CategoryView" asp-controller="Finances" asp-route-sortBy="CategoryName" asp-route-sortType="@Model.SortTypeForColumns["CategoryName"]">Kategoria</a></th>
+                            <th scope="col"><a class="text-reset text-decoration-none" asp-action="CategoryView" asp-controller="Finances" asp-route-sortBy="Amount" asp-route-sortType="@Model.SortTypeForColumns["Amount"]">Kwota</a></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.FinancialDataGrouped)
+                        {
+                            <tr>
+                                <td>@item.CategoryName</td>
+                                @if (item.Amount < 0)
+                                {
+                                    <td style="color: red;">@item.Amount</td>
+                                }
+                                else
+                                {
+                                    <td style="color: green;">@item.Amount</td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+    }
+
+</div>

@@ -1,0 +1,11 @@
+﻿<div class="container text-center pt-5">
+    <div class="fs-5 fw-bold pt-5">Rejestracja zakończona pomyślnie. Za chwilę nastąpi przekierowanie na stronę logowania.</div>
+    <div class="fs-5 fw-bold">Jeśli przekierowanie nie nastąpi automatycznie, naciśnij <a asp-controller="Home" asp-action="Login">tutaj</a></div>
+</div>
+
+<script>
+    setTimeout(function () {
+        var url = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/Home/Login";
+        window.location.replace(url);
+    }, 5000);
+</script>

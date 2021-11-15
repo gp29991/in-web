@@ -1,0 +1,120 @@
+﻿@{
+    Layout = "_Layout3";
+}
+
+<div class="container" style="max-width: 1000px">
+
+    <!-- Information alerts -->
+    @switch (Model.ShowAlert)
+    {
+        case "delete":
+            <div class="alert alert-success alert-dismissible fade show mt-5" role="alert">
+                Wpis został usunięty pomyślnie.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            break;
+        case "add":
+            <div class="alert alert-success alert-dismissible fade show mt-5" role="alert">
+                Wpis został dodany pomyślnie.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            break;
+        case "edit":
+            <div class="alert alert-success alert-dismissible fade show mt-5" role="alert">
+                Wpis został zmieniony pomyślnie.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            break;
+    }
+
+    <!-- Data table -->
+    @if (Model.FinancialDataList.Count == 0)
+    {
+        <div class="text-center fs-5 pt-5 pb-5">Brak danych spełniających zadane kryteria.</div>
+    }
+    else
+    {
+        if (Model.Options.Period == "all")
+        {
+            <div class="text-center fs-5 pt-5">Wszystkie @OptionsHelper.ViewScopeValues[Model.Options.ViewScope].ToLower()</div>
+        }
+        else
+        {
+            <div class="text-center fs-5 pt-5">@OptionsHelper.ViewScopeValues[Model.Options.ViewScope] za okres od @Model.Options.StartDate?.ToShortDateString() do @Model.Options.EndDate?.ToShortDateString()</div>
+        }
+        <table class="table table-sm mt-1" style="vertical-align: middle;">
+            <thead>
+                <tr>
+                    <th scope="col"><a class="text-reset text-decoration-none" asp-action="DetailView" asp-controller="Finances" asp-route-sortBy="Amount" asp-route-sortType="@Model.SortTypeForColumns["Amount"]">Kwota</a></th>
+                    <th scope="col"><a class="text-reset text-decoration-none" asp-action="DetailView" asp-controller="Finances" asp-route-sortBy="Date" asp-route-sortType="@Model.SortTypeForColumns["Date"]">Data</a></th>
+                    <th scope="col"><a class="text-reset text-decoration-none" asp-action="DetailView" asp-controller="Finances" asp-route-sortBy="CategoryName" asp-route-sortType="@Model.SortTypeForColumns["CategoryName"]">Kategoria</a></th>
+                    <th scope="col"><a class="text-reset text-decoration-none" asp-action="DetailView" asp-controller="Finances" asp-route-sortBy="Name" asp-route-sortType="@Model.SortTypeForColumns["Name"]">Nazwa</a></th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.FinancialDataList)
+                {
+                    <tr>
+                        @if (item.Amount < 0)
+                        {
+                            <td id="amount@(item.FinancialDataId)" style="color: red;">@item.Amount</td>
+                        }
+                        else
+                        {
+                            <td id="amount@(item.FinancialDataId)" style="color: green;">@item.Amount</td>
+                        }
+                        <td id="date@(item.FinancialDataId)">@item.Date.ToShortDateString()</td>
+                        <td id="category@(item.FinancialDataId)">@item.CategoryName</td>
+                        <td id="name@(item.FinancialDataId)">@item.Name</td>
+                        <td class="text-end px-0">
+                            <button type="button" id="descriptionButton@(item.FinancialDataId)" class="btn btn-secondary btn-sm" data-bs-toggle="collapse" data-bs-target="#descriptionRow@(item.FinancialDataId)" aria-expanded="false" aria-controls="descriptionRow@(item.FinancialDataId)" style="width: 90px">Pokaż opis</button>
+                            <a class="btn btn-success btn-sm" asp-action="EditEntry" asp-controller="Finances" asp-route-id="@item.FinancialDataId" style="width: 90px">Edytuj</a>
+                            <button type="button" id="deleteButton@(item.FinancialDataId)" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteConfirm" style="width: 90px">Usuń</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="pt-0 pb-0" colspan="5">
+                            @if (item.Description == null)
+                            {
+                                <div class="collapse" id="descriptionRow@(item.FinancialDataId)">(Brak opisu)</div>
+                            }
+                            else
+                            {
+                                <div class="collapse" id="descriptionRow@(item.FinancialDataId)">@item.Description</div>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+</div>
+
+<!-- Delete confirmation modal -->
+<div class="modal fade" id="deleteConfirm" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteConfirmLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmLabel">Potwierdzenie wykonania działania</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Czy na pewno chcesz usunąć następujący wpis:</p>
+                <p id="deleteDescription">Placeholder</p>
+                <p class="text-danger fw-bold">Tego działania nie da się cofnąć!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                <form id="deleteConfirmForm" asp-action="DeleteEntry" asp-controller="Finances" asp-route-id="0" method="post">
+                    <button type="submit" class="btn btn-danger">Usuń</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/js/detailview.js"></script>
+}

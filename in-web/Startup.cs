@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -47,7 +48,11 @@ namespace in_web
                     };
                 });
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews().AddMvcOptions(options =>
+            {
+                options.ModelBindingMessageProvider.SetAttemptedValueIsInvalidAccessor((s1, s2) => "Wprowadzona wartość jest nieprawidłowa");
+                options.ModelBindingMessageProvider.SetValueMustNotBeNullAccessor(s1 => "Wartość jest wymagana");
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -55,7 +60,8 @@ namespace in_web
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                //app.UseDeveloperExceptionPage();
+                app.UseExceptionHandler("/Home/Error");
             }
             else
             {
@@ -101,6 +107,12 @@ namespace in_web
             {
                 endpoints.MapDefaultControllerRoute();
             });
+
+            var cultureInfo = new CultureInfo("pl-PL");
+            cultureInfo.NumberFormat.CurrencySymbol = "zł";
+
+            CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+            CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
         }
     }
 }

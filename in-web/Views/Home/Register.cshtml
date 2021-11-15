@@ -1,7 +1,7 @@
 ﻿@model RegisterViewModel
 
 <div class="container" style="max-width: 500px">
-    <div class="text-center pt-3">Dodawanie użytkownika</div>
+    <div class="text-center pt-3 pb-3 fs-5 fw-bold">Rejestracja nowego użytkownika</div>
     <form asp-controller="Home" asp-action="Register" method="post">
         <div class="row pt-3">
             <div class="col-4">
@@ -50,4 +50,10 @@
             </div>
         </div>
     </form>
+
+    <div class="row pt-3">
+        <div class="col text-left">
+            <a asp-controller="Home" asp-action="Login">Powrót do logowania</a>
+        </div>
+    </div>
 </div>

@@ -1,0 +1,147 @@
+﻿@{
+    Layout = "_Layout2";
+}
+@model List<Category>
+
+<div class="container" style="max-width: 500px">
+
+    <!-- Information alerts -->
+    @switch (ViewBag.showalert)
+    {
+        case "add":
+            <div class="alert alert-success alert-dismissible fade show mt-5" role="alert">
+                Kategoria została dodana pomyślnie.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            break;
+        case "edit":
+            <div class="alert alert-success alert-dismissible fade show mt-5" role="alert">
+                Kategoria została zmieniona pomyślnie.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            break;
+        case "delete":
+            <div class="alert alert-success alert-dismissible fade show mt-5" role="alert">
+                Kategoria oraz wszystkie przypisane do niej wpisy zostały usunięte pomyślnie.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            break;
+        case "clear":
+            <div class="alert alert-success alert-dismissible fade show mt-5" role="alert">
+                Wpisy przypisane do kategorii domyślnej zostały usunięte pomyślnie.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            break;
+    }
+
+    <!-- Data table -->
+    <div class="text-center fs-5 pt-3">Lista dostępnych kategorii</div>
+
+    <div class="text-center">
+        <button class="btn btn-info btn-sm mt-1" type="button" data-bs-toggle="modal" data-bs-target="#categoryExplanation" style="width: 200px;">
+            Informacje o liście kategorii
+        </button>
+    </div>
+
+    <table class="table table-sm mt-1" style="vertical-align: middle;">
+        <thead>
+            <tr>
+                <th scope="col">Nazwa</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var category in Model)
+            {
+                <tr>
+                    @if (category.CategoryId == 0)
+                    {
+                        <td id="defaultCategory@(category.CategoryName)">@category.CategoryName</td>
+                    }
+                    else
+                    {
+                        <td id="category@(category.CategoryId)">@category.CategoryName</td>
+                    }
+                    @if (category.CategoryId == 0)
+                    {
+                        <td class="text-end px-0">
+                            <button type="button" id="clearButton@(category.CategoryName)" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteConfirm" style="width: 90px">Wyczyść</button>
+                        </td>
+                    }
+                    else
+                    {
+                        <td class="text-end px-0">
+                            <a class="btn btn-success btn-sm" asp-action="EditCategory" asp-controller="Category" asp-route-id="@category.CategoryId" style="width: 90px">Edytuj</a>
+                            <button type="button" id="deleteButton@(category.CategoryId)" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteConfirm" style="width: 90px">Usuń</button>
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
+
+<!-- Delete/Clear confirmation modal -->
+<div class="modal fade" id="deleteConfirm" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteConfirmLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmLabel">Potwierdzenie wykonania działania</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="deleteDescription">Placeholder</p>
+                <p class="text-danger fw-bold">Tego działania nie da się cofnąć!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                <form id="deleteConfirmForm" asp-action="DeleteCategory" asp-controller="Category" asp-route-id="0" method="post">
+                    <button type="submit" class="btn btn-danger">Usuń</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Explanation modal -->
+<div class="modal fade" id="categoryExplanation" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div>
+                    Kategorie, przy których nie ma opcji edycji, to kategorie domyślne.
+                    Tych kategorii nie można usunąć ani zmienić ich nazwy; można tylko usunąć wszystkie przypisane do nich wpisy (opcja "Wyczyść").
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="text-center pt-1">
+    <a class="btn btn-primary btn-sm" asp-action="AddCategory" asp-controller="Category" style="width: 200px;">Dodaj nową kategorię</a>
+</div>
+
+@if (ViewBag.tomainpage)
+{
+    <div class="text-center pt-1">
+        <a class="btn btn-secondary btn-sm" asp-action="MainPage" asp-controller="Finances" style="width: 200px;">Powrót do strony głównej</a>
+    </div>
+}
+else
+{
+    <div class="text-center pt-1">
+        <a class="btn btn-secondary btn-sm" asp-action="ReturnToView" asp-controller="Finances" style="width: 200px;">Powrót do widoku</a>
+    </div>
+}
+
+@section scripts{
+    <script src="~/lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/js/categorylist.js"></script>
+}

@@ -1,0 +1,44 @@
+﻿@{
+    Layout = "_Layout2";
+}
+@model Category
+
+<div class="container" style="max-width: 500px">
+    <div class="text-center pt-3">Edycja kategorii</div>
+    <form id="editForm" asp-controller="Category" asp-action="EditCategory" method="post">
+
+        <input hidden asp-for="Username">
+        <input hidden id="identification" asp-for="CategoryId">
+
+        <div class="row pt-3">
+            <div class="col-4">
+                <label asp-for="CategoryName" class="col-form-label"></label>
+            </div>
+            <div class="col-8">
+                <input asp-for="CategoryName" class="form-control" />
+                <span asp-validation-for="CategoryName" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row pt-3">
+            <div class="col text-center text-danger">@Html.ValidationMessage("Error")</div>
+        </div>
+
+        <div class="row pt-3">
+            <div class="col text-center">
+                <button type="submit" class="btn btn-primary btn-sm" style="width: 200px">Zmień</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="row pt-3">
+        <div class="col text-center">
+            <a class="btn btn-secondary btn-sm" asp-action="CategoryList" asp-controller="Category" style="width: 200px">Powrót do listy</a>
+        </div>
+    </div>
+
+</div>
+
+@section scripts{
+    <script src="~/js/editcategory.js"></script>
+}

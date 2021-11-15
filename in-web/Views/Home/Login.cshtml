@@ -1,7 +1,8 @@
 ﻿@model LoginViewModel
 
 <div class="container" style="max-width: 500px">
-    <div class="text-center pt-3">Logowanie</div>
+    <div class="text-center pt-3 pb-3 fs-5 fw-bold">Witaj w organizatorze finansów domowych!</div>
+    <div class="text-center">Zaloguj się, aby rozpocząć pracę</div>
     <form asp-controller="Home" asp-action="Login" method="post">
         <div class="row pt-3">
             <div class="col-4">
@@ -32,4 +33,10 @@
             </div>
         </div>
     </form>
+
+    <div class="row pt-3">
+        <div class="col text-left">
+            <a asp-controller="Home" asp-action="Register">Nie masz jeszcze konta? Zarejestruj się!</a>
+        </div>
+    </div>
 </div>
