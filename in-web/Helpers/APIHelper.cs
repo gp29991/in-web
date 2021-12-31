@@ -12,7 +12,7 @@ namespace in_web.Helpers
         public static HttpClient Initialize()
         {
             HttpClient client = new();
-            client.BaseAddress = new Uri("https://localhost:44347/");
+            client.BaseAddress = new Uri("http://127.0.0.1:5000/");
             return client;
         }
 

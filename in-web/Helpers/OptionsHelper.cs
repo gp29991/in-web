@@ -54,8 +54,8 @@ namespace in_web.Helpers
                 {
                     if (options.StartDate != DateTime.Today.AddDays(period) || options.EndDate != DateTime.Today)
                     {
-                        options.StartDate = DateTime.Today;
-                        options.EndDate = DateTime.Today.AddDays(period);
+                        options.StartDate = DateTime.Today.AddDays(period);
+                        options.EndDate = DateTime.Today;
                     }
                 }
             }
