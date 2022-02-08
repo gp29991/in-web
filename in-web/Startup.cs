@@ -50,7 +50,7 @@ namespace in_web
 
             services.AddControllersWithViews().AddMvcOptions(options =>
             {
-                options.ModelBindingMessageProvider.SetAttemptedValueIsInvalidAccessor((s1, s2) => "Wprowadzona wartość jest nieprawidłowa");
+                options.ModelBindingMessageProvider.SetAttemptedValueIsInvalidAccessor((s1, s2) => "Należy wprowadzić kwotę w formacie \"0,00\"");
                 options.ModelBindingMessageProvider.SetValueMustNotBeNullAccessor(s1 => "Wartość jest wymagana");
             });
         }

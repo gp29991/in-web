@@ -33,6 +33,13 @@ namespace in_web.Helpers
             { "cat", "Pogrupowany wg kategorii" }
         };
 
+        public static Dictionary<string, string> ChartTypeValues = new Dictionary<string, string>
+        {
+            { "bartotals", "Przychody i wydatki" },
+            { "pieinc", "Przychody wg kategorii" },
+            { "pieexp", "Wydatki wg kategorii" }
+        };
+
         public static Options VerifyOptions (Options options, string viewType)
         {
             if (!Periods.Any(item => item.Value == options.Period))
@@ -148,6 +155,93 @@ namespace in_web.Helpers
             }
 
             return sortOptions;
+        }
+
+        public static ChartOptions VerifyChartOptions(ChartOptions chartOptions)
+        {
+            if (!Periods.Any(item => item.Value == chartOptions.Period))
+            {
+                chartOptions.Period = "-30";
+            }
+
+            if (int.TryParse(chartOptions.Period, out int period))
+            {
+                if (period > 0)
+                {
+                    if (chartOptions.StartDate != DateTime.Today || chartOptions.EndDate != DateTime.Today.AddDays(period))
+                    {
+                        chartOptions.StartDate = DateTime.Today;
+                        chartOptions.EndDate = DateTime.Today.AddDays(period);
+                    }
+                }
+                else
+                {
+                    if (chartOptions.StartDate != DateTime.Today.AddDays(period) || chartOptions.EndDate != DateTime.Today)
+                    {
+                        chartOptions.StartDate = DateTime.Today.AddDays(period);
+                        chartOptions.EndDate = DateTime.Today;
+                    }
+                }
+            }
+            else
+            {
+                if (chartOptions.StartDate == null || chartOptions.EndDate == null)
+                {
+                    chartOptions.StartDate = DateTime.Today.AddDays(-30);
+                    chartOptions.EndDate = DateTime.Today;
+                }
+                else
+                {
+                    if (chartOptions.StartDate.Value.CompareTo(chartOptions.EndDate.Value) > 0)
+                    {
+                        chartOptions.StartDate = chartOptions.EndDate;
+                    }
+                }
+            }
+
+            if (!ChartTypeValues.ContainsKey(chartOptions.ChartType))
+            {
+                chartOptions.ChartType = "bartotals";
+            }
+
+            return chartOptions;
+        }
+
+        public static ChartOptions DefaultChartOptions()
+        {
+            ChartOptions chartOptions = new();
+
+            chartOptions.Period = "-30";
+            chartOptions.StartDate = DateTime.Today.AddDays(-30);
+            chartOptions.EndDate = DateTime.Today;
+            chartOptions.ChartType = "bartotals";
+
+            return chartOptions;
+        }
+
+        public static ChartOptions GetChartOptions(HttpRequest request)
+        {
+            var chartOptionsFromCookie = request.Cookies["chartoptions"];
+            ChartOptions chartOptions;
+
+            if (chartOptionsFromCookie != null)
+            {
+                chartOptions = JSONHelper.TryParseJson<ChartOptions>(chartOptionsFromCookie);
+                if (chartOptions == null)
+                {
+                    chartOptions = DefaultChartOptions();
+                }
+                else
+                {
+                    chartOptions = VerifyChartOptions(chartOptions);
+                }
+            }
+            else
+            {
+                chartOptions = DefaultChartOptions();
+            }
+
+            return chartOptions;
         }
     }
 }

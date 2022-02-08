@@ -1,0 +1,136 @@
+﻿@{
+    Layout = "_Layout4";
+}
+
+<div class="container" style="max-width: 1000px;">
+    @if (Model.ChartOptions.ChartType == "bartotals")
+    {
+        if (Model.TotalInc == 0 && Model.TotalExp == 0)
+        {
+            <div class="text-center fs-5 pt-5 pb-5">W zadanym okresie nie występują ani przychody, ani wydatki.</div>
+        }
+        else
+        {
+            if (Model.ChartOptions.Period == "all")
+            {
+                <div class="text-center fs-5 pt-5">Całkowite saldo przychodów i wydatków</div>
+            }
+            else
+            {
+                <div class="text-center fs-5 pt-5">Saldo przychodów i wydatków za okres od @Model.ChartOptions.StartDate?.ToShortDateString() do @Model.ChartOptions.EndDate?.ToShortDateString()</div>
+            }
+            <div class="pt-3 pb-3" style="max-width: 800px; margin: auto;">
+                <canvas id="chart"></canvas>
+            </div>
+        }
+    }
+
+    @if (Model.ChartOptions.ChartType == "pieinc" || Model.ChartOptions.ChartType == "pieexp")
+    {
+        if (Model.FinancialDataGrouped.Count == 0)
+        {
+            <div class="text-center fs-5 pt-5 pb-5">Brak danych spełniających zadane kryteria.</div>
+        }
+        else
+        {
+            if (Model.ChartOptions.Period == "all")
+            {
+                <div class="text-center fs-5 pt-5">Wszystkie @(Model.ChartOptions.ChartType == "pieinc" ? "przychody" : "wydatki") pogrupowane wg kategorii</div>
+            }
+            else
+            {
+                <div class="text-center fs-5 pt-5">@(Model.ChartOptions.ChartType == "pieinc" ? "Przychody" : "Wydatki") za okres od @Model.ChartOptions.StartDate?.ToShortDateString() do @Model.ChartOptions.EndDate?.ToShortDateString() pogrupowane wg kategorii</div>
+            }
+            <div class="pt-3 pb-3" style="max-width: 800px; margin: auto;">
+                <canvas id="chart"></canvas>
+            </div>
+        }
+    }
+</div>
+
+@section scripts{
+    <script src="~/lib/Chart.js/chart.min.js"></script>
+
+    @if (Model.ChartOptions.ChartType == "bartotals" && Model.TotalInc != null && Model.TotalExp != null && (Model.TotalInc != 0 || Model.TotalExp != 0))
+    {
+        <script>
+            const ctx = document.getElementById('chart').getContext('2d');
+            const inc = parseFloat("@Model.TotalInc".replace(',', '.'));
+            const exp = parseFloat("@Model.TotalExp".replace(',', '.')) * (-1);
+            const chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Przychody', 'Wydatki'],
+                    datasets: [{
+                        data: [inc, exp],
+                        backgroundColor: ['green', 'red']
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    aspectRatio: 1
+                }
+            });
+        </script>
+    }
+
+    @if ((Model.ChartOptions.ChartType == "pieinc" || Model.ChartOptions.ChartType == "pieexp") && Model.FinancialDataGrouped != null && Model.FinancialDataGrouped.Count != 0)
+    {
+<script>
+            const ctx = document.getElementById('chart').getContext('2d');
+            const labels = [];
+            const data = [];
+            const backgroundColor = [];
+            backgroundColor.push("#87CEEB");
+            backgroundColor.push("#32CD32");
+            backgroundColor.push("#BA55D3");
+            backgroundColor.push("#F08080");
+            backgroundColor.push("#4682B4");
+            backgroundColor.push("#9ACD32");
+            backgroundColor.push("#40E0D0");
+            backgroundColor.push("#FF69B4");
+            backgroundColor.push("#F0E68C");
+            backgroundColor.push("#D2B48C");
+            @{int index = 0; }
+            @foreach (var item in Model.FinancialDataGrouped)
+            {
+                @: labels.push("@Html.Raw(item.CategoryName)");
+                @if(Model.ChartOptions.ChartType == "pieexp")
+                {
+                    @: data.push(parseFloat("@item.Amount".replace(',', '.')) * (-1));
+                }
+                else
+                {
+                    @: data.push(parseFloat("@item.Amount".replace(',', '.')));
+                }
+                @if (index > 9)
+                {
+                    @: backgroundColor.push("#" + Math.floor(Math.random() * 16777215).toString(16));
+                }
+                index++;
+            }
+            const chart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: backgroundColor
+                    }]
+                },
+                options: {
+                    aspectRatio: 1
+                }
+            });
+</script>
+    }
+}

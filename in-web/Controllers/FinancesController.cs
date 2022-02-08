@@ -22,6 +22,7 @@ namespace in_web.Controllers
         {
             Response.Cookies.Delete("options");
             Response.Cookies.Delete("sortoptions");
+            Response.Cookies.Delete("chartoptions");
 
             HttpClient client = APIHelper.InitializeAuth(Request);
             
@@ -239,6 +240,79 @@ namespace in_web.Controllers
             }
 
             return RedirectToAction("DetailView", new { showAlert = showAlert });
+        }
+
+        public async Task<IActionResult> ChartView()
+        {
+            HttpClient client = APIHelper.InitializeAuth(Request);
+
+            if (client == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            var chartOptions = OptionsHelper.GetChartOptions(Request);
+
+            var model = new ChartViewModel();
+            model.ChartOptions = chartOptions;
+
+            HttpResponseMessage res;
+
+            if (model.ChartOptions.ChartType == "pieinc" || model.ChartOptions.ChartType == "pieexp")
+            {
+                if (model.ChartOptions.Period == "all")
+                {
+                    res = await client.GetAsync(string.Format("api/financialdata/getall?scope={0}&aggregate=true", model.ChartOptions.ChartType.Substring(3)));
+                }
+                else
+                {
+                    res = await client.GetAsync(string.Format("api/financialdata/getall?startDate={0}&endDate={1}&scope={2}&aggregate=true", model.ChartOptions.StartDate?.ToString("d", CultureInfo.InvariantCulture), model.ChartOptions.EndDate?.ToString("d", CultureInfo.InvariantCulture), model.ChartOptions.ChartType.Substring(3)));
+                }
+
+                var content = await res.Content.ReadAsStringAsync();
+                var result = JSONHelper.TryParseJson<ResponseObj<List<FinancialDataGrouped>>>(content);
+
+                if (result == null || !res.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("Error", "Home");
+                }
+
+                model.FinancialDataGrouped = result.Obj;
+            }
+            else
+            {
+                if (model.ChartOptions.Period == "all")
+                {
+                    res = await client.GetAsync("api/financialdata/getall?total=true");
+                }
+                else
+                {
+                    res = await client.GetAsync(string.Format("api/financialdata/getall?startDate={0}&endDate={1}&total=true", model.ChartOptions.StartDate?.ToString("d", CultureInfo.InvariantCulture), model.ChartOptions.EndDate?.ToString("d", CultureInfo.InvariantCulture)));
+                }
+
+                var content = await res.Content.ReadAsStringAsync();
+                var result = JSONHelper.TryParseJson<ResponseObj<Dictionary<string, decimal>>>(content);
+
+                if (result == null || !res.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("Error", "Home");
+                }
+
+                model.TotalInc = result.Obj["incsum"];
+                model.TotalExp = result.Obj["expsum"];
+            }
+
+            ViewBag.title = "Widok wykresów";
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult ChangeChartView(ChartViewModel model)
+        {
+            string chartOptions = JsonConvert.SerializeObject(model.ChartOptions);
+            Response.Cookies.Append("chartoptions", chartOptions);
+
+            return RedirectToAction("ChartView");
         }
 
         [HttpGet]

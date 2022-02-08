@@ -30,7 +30,7 @@
     <!-- Data table -->
     @if (Model.FinancialDataList.Count == 0)
     {
-        <div class="text-center fs-5 pt-5 pb-5">Brak danych spełniających zadane kryteria.</div>
+        <div class="text-center fs-5 pt-4 pb-5">Brak danych spełniających zadane kryteria.</div>
     }
     else
     {
@@ -42,7 +42,7 @@
         {
             <div class="text-center fs-5 pt-5">@OptionsHelper.ViewScopeValues[Model.Options.ViewScope] za okres od @Model.Options.StartDate?.ToShortDateString() do @Model.Options.EndDate?.ToShortDateString()</div>
         }
-        <table class="table table-sm mt-1" style="vertical-align: middle;">
+        <table class="table mt-1" style="vertical-align: middle;">
             <thead>
                 <tr>
                     <th scope="col"><a class="text-reset text-decoration-none" asp-action="DetailView" asp-controller="Finances" asp-route-sortBy="Amount" asp-route-sortType="@Model.SortTypeForColumns["Amount"]">Kwota</a></th>
@@ -56,25 +56,28 @@
                 @foreach (var item in Model.FinancialDataList)
                 {
                     <tr>
+                        <td class="border-bottom border-secondary" colspan="5"></td>
+                    </tr>
+                    <tr>
                         @if (item.Amount < 0)
                         {
-                            <td id="amount@(item.FinancialDataId)" style="color: red;">@item.Amount</td>
+                            <td class="pt-3 border-start border-bottom-0 border-secondary" id="amount@(item.FinancialDataId)" style="color: red;">@item.Amount</td>
                         }
                         else
                         {
-                            <td id="amount@(item.FinancialDataId)" style="color: green;">@item.Amount</td>
+                            <td class="pt-3 border-start border-bottom-0 border-secondary" id="amount@(item.FinancialDataId)" style="color: green;">@item.Amount</td>
                         }
-                        <td id="date@(item.FinancialDataId)">@item.Date.ToShortDateString()</td>
-                        <td id="category@(item.FinancialDataId)">@item.CategoryName</td>
-                        <td id="name@(item.FinancialDataId)">@item.Name</td>
-                        <td class="text-end px-0">
+                        <td class="pt-3 border-bottom-0" id="date@(item.FinancialDataId)">@item.Date.ToShortDateString()</td>
+                        <td class="pt-3 border-bottom-0" id="category@(item.FinancialDataId)">@item.CategoryName</td>
+                        <td class="pt-3 border-bottom-0" id="name@(item.FinancialDataId)">@item.Name</td>
+                        <td class="text-end px-1 pt-3 border-bottom-0 border-end border-secondary">
                             <button type="button" id="descriptionButton@(item.FinancialDataId)" class="btn btn-secondary btn-sm" data-bs-toggle="collapse" data-bs-target="#descriptionRow@(item.FinancialDataId)" aria-expanded="false" aria-controls="descriptionRow@(item.FinancialDataId)" style="width: 90px">Pokaż opis</button>
                             <a class="btn btn-success btn-sm" asp-action="EditEntry" asp-controller="Finances" asp-route-id="@item.FinancialDataId" style="width: 90px">Edytuj</a>
                             <button type="button" id="deleteButton@(item.FinancialDataId)" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteConfirm" style="width: 90px">Usuń</button>
                         </td>
                     </tr>
                     <tr>
-                        <td class="pt-0 pb-0" colspan="5">
+                        <td class="pt-0 pb-3 border-start border-end border-bottom border-secondary" colspan="5">
                             @if (item.Description == null)
                             {
                                 <div class="collapse" id="descriptionRow@(item.FinancialDataId)">(Brak opisu)</div>

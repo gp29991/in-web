@@ -9,7 +9,7 @@
     <link href="~/lib/bootstrap/css/bootstrap.css" rel="stylesheet">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <ul class="navbar-nav">
             <li class="nav-item ps-3">
                 <div class="navbar-text">Zalogowany jako: @User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Name).Value</div>

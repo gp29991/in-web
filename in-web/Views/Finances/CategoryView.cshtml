@@ -29,7 +29,7 @@
             <div class="text-center fs-5 pt-5">@OptionsHelper.ViewScopeValues[Model.Options.ViewScope] za okres od @Model.Options.StartDate?.ToShortDateString() do @Model.Options.EndDate?.ToShortDateString() pogrupowane wg kategorii</div>
         }
             <div class="row justify-content-center">
-                <table class="table table-sm mt-1" style="vertical-align: middle; max-width: 500px">
+                <table class="table mt-1" style="vertical-align: middle; max-width: 500px">
                     <thead>
                         <tr>
                             <th scope="col"><a class="text-reset text-decoration-none" asp-action="CategoryView" asp-controller="Finances" asp-route-sortBy="CategoryName" asp-route-sortType="@Model.SortTypeForColumns["CategoryName"]">Kategoria</a></th>
@@ -40,14 +40,17 @@
                         @foreach (var item in Model.FinancialDataGrouped)
                         {
                             <tr>
-                                <td>@item.CategoryName</td>
+                                <td class="border-bottom border-secondary" colspan="2"></td>
+                            </tr>
+                            <tr>
+                                <td class="pt-3 pb-3 border-start border-bottom border-secondary">@item.CategoryName</td>
                                 @if (item.Amount < 0)
                                 {
-                                    <td style="color: red;">@item.Amount</td>
+                                    <td class="pt-3 pb-3 border-bottom border-end border-secondary" style="color: red;">@item.Amount</td>
                                 }
                                 else
                                 {
-                                    <td style="color: green;">@item.Amount</td>
+                                    <td class="pt-3 pb-3 border-bottom border-end border-secondary" style="color: green;">@item.Amount</td>
                                 }
                             </tr>
                         }

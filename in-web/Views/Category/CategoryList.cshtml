@@ -43,7 +43,7 @@
         </button>
     </div>
 
-    <table class="table table-sm mt-1" style="vertical-align: middle;">
+    <table class="table mt-1" style="vertical-align: middle;">
         <thead>
             <tr>
                 <th scope="col">Nazwa</th>
@@ -54,23 +54,26 @@
             @foreach (var category in Model)
             {
                 <tr>
+                    <td class="border-bottom border-secondary" colspan="2"></td>
+                </tr>
+                <tr>
                     @if (category.CategoryId == 0)
                     {
-                        <td id="defaultCategory@(category.CategoryName)">@category.CategoryName</td>
+                        <td class="pt-3 pb-3 border-start border-bottom border-secondary" id="defaultCategory@(category.CategoryName)">@category.CategoryName</td>
                     }
                     else
                     {
-                        <td id="category@(category.CategoryId)">@category.CategoryName</td>
+                        <td class="pt-3 pb-3 border-start border-bottom border-secondary" id="category@(category.CategoryId)">@category.CategoryName</td>
                     }
                     @if (category.CategoryId == 0)
                     {
-                        <td class="text-end px-0">
+                        <td class="text-end px-1 pt-3 pb-3 border-bottom border-end border-secondary">
                             <button type="button" id="clearButton@(category.CategoryName)" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteConfirm" style="width: 90px">Wyczyść</button>
                         </td>
                     }
                     else
                     {
-                        <td class="text-end px-0">
+                        <td class="text-end px-1 pt-3 pb-3 border-bottom border-end border-secondary">
                             <a class="btn btn-success btn-sm" asp-action="EditCategory" asp-controller="Category" asp-route-id="@category.CategoryId" style="width: 90px">Edytuj</a>
                             <button type="button" id="deleteButton@(category.CategoryId)" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteConfirm" style="width: 90px">Usuń</button>
                         </td>

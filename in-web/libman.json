@@ -13,6 +13,10 @@
     {
       "library": "jqueryui@1.12.1",
       "destination": "wwwroot/lib/jqueryui/"
+    },
+    {
+      "library": "Chart.js@3.7.0",
+      "destination": "wwwroot/lib/Chart.js/"
     }
   ]
 }

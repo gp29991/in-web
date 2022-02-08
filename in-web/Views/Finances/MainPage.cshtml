@@ -11,6 +11,8 @@
     <div class="text-center pt-3">Wydatki</div>
     <div class="text-center pt-1" style="color: red;"><h1>@Model.TotalExp.ToString("N2")</h1></div>
 
+    <canvas id="chart" style="max-height: 100px"></canvas>
+
     @if (Model.UpcomingSignificantExpenses.Count == 0)
     {
         <div class="text-center fs-5 pt-5 pb-5">Brak większych wydatków zaplanowanych w ciągu najbliższych 7 dni.</div>
@@ -18,7 +20,7 @@
     else
     {
         <div class="text-center fw-bold fs-4 pt-3" style="color: red;">Uwaga! W ciągu najbliższych 7 dni występują większe wydatki!</div>
-        <table class="table table-sm mt-1" style="vertical-align: middle;">
+        <table class="table mt-1" style="vertical-align: middle;">
             <thead>
                 <tr>
                     <th scope="col">Kwota</th>
@@ -32,16 +34,19 @@
                 @foreach (var item in Model.UpcomingSignificantExpenses)
                 {
                     <tr>
-                        <td style="color: red;">@item.Amount</td>
-                        <td>@item.Date.ToShortDateString()</td>
-                        <td>@item.CategoryName</td>
-                        <td>@item.Name</td>
-                        <td>
+                        <td class="border-bottom border-secondary" colspan="5"></td>
+                    </tr>
+                    <tr>
+                        <td class="pt-3 border-start border-bottom-0 border-secondary" style="color: red;">@item.Amount</td>
+                        <td class="pt-3 border-bottom-0">@item.Date.ToShortDateString()</td>
+                        <td class="pt-3 border-bottom-0">@item.CategoryName</td>
+                        <td class="pt-3 border-bottom-0">@item.Name</td>
+                        <td class="pt-3 border-bottom-0 border-end border-secondary">
                             <button type="button" id="descriptionButton@(item.FinancialDataId)" class="btn btn-secondary btn-sm" data-bs-toggle="collapse" data-bs-target="#descriptionRow@(item.FinancialDataId)" aria-expanded="false" aria-controls="descriptionRow@(item.FinancialDataId)" style="width: 90px">Pokaż opis</button>
                         </td>
                     </tr>
                     <tr>
-                        <td class="pt-0 pb-0" colspan="5">
+                        <td class="pt-0 pb-3 border-start border-end border-bottom border-secondary" colspan="5">
                             @if (item.Description == null)
                             {
                                 <div class="collapse" id="descriptionRow@(item.FinancialDataId)">(Brak opisu)</div>
@@ -64,6 +69,9 @@
         <a class="btn btn-warning btn-sm" asp-action="CategoryList" asp-controller="Category" style="width: 200px;">Zarządzanie kategoriami</a>
     </div>
     <div class="text-center pt-1">
+        <a class="btn btn-dark btn-sm" asp-action="ChartView" asp-controller="Finances" style="width: 200px;">Widok wykresów</a>
+    </div>
+    <div class="text-center pt-1 pb-4">
         <form method="post" asp-action="Logout" asp-controller="Home">
             <button type="submit" class="btn btn-secondary btn-sm" style="width: 200px;">Wyloguj się</button>
         </form>
@@ -74,4 +82,33 @@
 @section scripts{
     <script src="~/lib/bootstrap/js/bootstrap.min.js"></script>
     <script src="~/js/mainpage.js"></script>
+    <script src="~/lib/Chart.js/chart.min.js"></script>
+    <script>
+        const ctx = document.getElementById('chart').getContext('2d');
+        const inc = parseFloat("@Model.TotalInc".replace(',', '.'));
+        const exp = parseFloat("@Model.TotalExp".replace(',', '.')) * (-1);
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Przychody', 'Wydatki'],
+                datasets: [{ 
+                    data: [inc, exp],
+                    backgroundColor: ['green', 'red']
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                indexAxis: 'y'
+            }
+        });
+    </script>
 }
