@@ -95,28 +95,30 @@
 
 </div>
 
-<!-- Delete confirmation modal -->
-<div class="modal fade" id="deleteConfirm" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteConfirmLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteConfirmLabel">Potwierdzenie wykonania działania</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Czy na pewno chcesz usunąć następujący wpis:</p>
-                <p id="deleteDescription">Placeholder</p>
-                <p class="text-danger fw-bold">Tego działania nie da się cofnąć!</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
-                <form id="deleteConfirmForm" asp-action="DeleteEntry" asp-controller="Finances" asp-route-id="0" method="post">
-                    <button type="submit" class="btn btn-danger">Usuń</button>
-                </form>
+@section modal{
+    <!-- Delete confirmation modal -->
+    <div class="modal fade" id="deleteConfirm" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteConfirmLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteConfirmLabel">Potwierdzenie wykonania działania</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Czy na pewno chcesz usunąć następujący wpis:</p>
+                    <p id="deleteDescription">Placeholder</p>
+                    <p class="text-danger fw-bold">Tego działania nie da się cofnąć!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                    <form id="deleteConfirmForm" asp-action="DeleteEntry" asp-controller="Finances" asp-route-id="0" method="post">
+                        <button type="submit" class="btn btn-danger">Usuń</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
+}
 
 @section scripts{
     <script src="~/js/detailview.js"></script>
